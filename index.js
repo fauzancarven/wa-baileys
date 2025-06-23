@@ -66,8 +66,9 @@ app.use('/login', loginRoutes);
 app.use('/register', registerRoutes);
 app.use('/', appRoutes);
 app.use('/datatable', datatableRoutes);
-app.post('/deploy', (req, res) =>
-{
+app.post('/deploy', (req, res) => deploy_php(req, res));
+app.get('/deploy', (req, res) => deploy_php(req, res));
+function deploy_php(req, res){
     childProcess.exec('git pull', (error, stdout, stderr) =>
     {
         if (error)
@@ -77,7 +78,7 @@ app.post('/deploy', (req, res) =>
         }
         res.send(stdout);
     }); 
-});
+}
 // Gunakan port server
 server.listen(2000, ()=>{
     console.log('Server Berjalan di Port : '+ 2000);
