@@ -2,7 +2,7 @@
     "ignore": [
         "node_modules",
         "auth_info_baileys",
-        "src",
+        "src/views",
         "wa-log*"
     ]
 }

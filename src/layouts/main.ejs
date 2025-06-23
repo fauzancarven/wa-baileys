@@ -729,20 +729,20 @@
             <span>Dashboard</span>
           </a> 
         </li> 
-        <li class="<%- title == "Device" ? "active-page" : "" %>">
-          <a href="<%- url %>device" class="<%- title === "Device" ? "active-page" : "" %>">
+        <li class="<%- (title === "Device" ? "active-page" : "") %>">
+          <a href="<%- url %>device" class="<%- (title === "Device" ? "active-page" : "") %>">
             <iconify-icon icon="gravity-ui:smartphone" class="menu-icon"></iconify-icon>
             <span>Device</span>
           </a>
         </li> 
-        <li class="dropdown <%- title == "Phonebook" ? "active-page" : "" %>">
-          <a href="javascript:void(0)" >
+        <li class="dropdown <%- (title === "Phonebook" ? "active-page" : "") %>">
+          <a href="javascript:void(0)" class="<%- (title === "Phonebook" ? "active-page" : "") %>" >
             <iconify-icon icon="gravity-ui:book" class="menu-icon"></iconify-icon>
             <span>Phonebook</span>
           </a>
           <ul class="sidebar-submenu">
             <li>
-                <a href="<%- url %>contact">
+                <a href="<%- url %>contact" class="<%- (typeof subtitle !== 'undefined' && subtitle === "Contact" ? "active-page" : "") %>">
                     <iconify-icon icon="gridicons:user" class="menu-icon"></iconify-icon>
                     <span>Contact</span>
                 </a>
@@ -761,13 +761,25 @@
             </li>
           </ul>
         </li> 
-        <li class="sidebar-menu-group-title">Application</li>  
+        <li class="sidebar-menu-group-title">Application</li>   
         <li>
             <a href="<%- url %>chat">
               <iconify-icon icon="bi:chat-dots" class="menu-icon"></iconify-icon>
-              <span>chat</span>
+              <span>Message</span>
             </a>
-          </li> 
+        </li> 
+        <li>
+            <a href="<%- url %>history">
+              <iconify-icon icon="material-symbols:history-rounded" class="menu-icon"></iconify-icon>
+              <span>History API</span>
+            </a>
+        </li> 
+        <li>
+            <a href="<%- url %>bot">
+              <i class="ri-robot-2-line text-xl me-6 d-flex w-auto"></i>
+              <span>Bot API</span>
+            </a>
+        </li>
       </ul>
     </div>
   </aside>
