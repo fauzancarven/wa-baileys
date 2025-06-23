@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const flash = require('req-flash');
 const app = express();
+const childProcess = require('child_process');
 const server = require("http").createServer(app); 
 const io = require("socket.io")(server);
 
@@ -65,7 +66,18 @@ app.use('/login', loginRoutes);
 app.use('/register', registerRoutes);
 app.use('/', appRoutes);
 app.use('/datatable', datatableRoutes);
-
+app.post('/deploy', (req, res) =>
+{
+    childProcess.exec('git pull', (error, stdout, stderr) =>
+    {
+        if (error)
+        {
+            res.status(500).send(`Error: ${error}`);
+            return;
+        }
+        res.send(stdout);
+    }); 
+});
 // Gunakan port server
 server.listen(5050, ()=>{
     console.log('Server Berjalan di Port : '+ 5050);
