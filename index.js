@@ -79,8 +79,8 @@ app.post('/deploy', (req, res) =>
     }); 
 });
 // Gunakan port server
-server.listen(5050, ()=>{
-    console.log('Server Berjalan di Port : '+ 5050);
+server.listen(2000, ()=>{
+    console.log('Server Berjalan di Port : '+ 2000);
 });
 const session_wa = {};
 const WhatsApp = require('./bailleys');  
