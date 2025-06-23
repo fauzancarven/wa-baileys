@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="id"> 
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Form - MGSONLINE</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="css/fontawesome-all.min.css">
+    <link rel="stylesheet" type="text/css" href="css/iofrm-style.css">
+    <link rel="stylesheet" type="text/css" href="css/iofrm-theme42.css">
+</head>
+<body>
+    <div class="form-body form-left">
+        <div class="iofrm-layout">
+            <div class="img-holder text-start">
+                <div class="bg"></div>
+                <div class="info-holder">
+                    <img src="images/image.png" alt="">
+                </div>
+            </div>
+            <div class="form-holder">
+                <div class="form-content justify-content-end">
+                    <div class="form-items">
+                        <div class="website-logo-inside logo-normal"> 
+
+                        </div>
+                        <h3 class="font-md">WA API (unofficial)</h3>
+                        <p>Memudahkan kamu berkomunikasi langsung dengan banyak pelanggan.</p>
+                        
+                        <%if (pesanFlash) { %>
+                            <div class="alert alert-<%= colorFlash %> alert-dismissible fade show mt-3" role="alert">
+                                <strong><%= statusFlash %></strong> 
+                                <%= pesanFlash %>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        <% } %>
+                        <form action="<%= url %>login/auth" method="POST" >
+                            <input class="form-control" type="email" name="email" placeholder="Masukan email" required="">
+                            <input class="form-control" type="password" name="pass" placeholder="Masukan password" required="">
+                            <div class="form-button d-flex">
+                                <button id="submit" type="submit" class="btn btn-success">Login</button>
+                                <a href="<%= url %>register" class="btn btn-outline-success">Create account</a>
+                            </div>
+                        </form>
+                        <div class="other-links">
+                            <span>Or login with</span>
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-google"></i></a>
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>console.log("test")</script>
+<script src="js/jquery.min.js"></script>
+<script src="js/popper.min.js"></script>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="js/main.js"></script>
+
+<style>
+    body,html { 
+        height:100%; 
+    } 
+</style>
+</body>
+</html>

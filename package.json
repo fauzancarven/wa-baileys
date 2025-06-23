@@ -1,0 +1,27 @@
+{
+  "name": "nodejs-basic-login",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Zeldianto EP",
+  "license": "ISC",
+  "dependencies": {
+    "@hapi/boom": "^10.0.1",
+    "@whiskeysockets/baileys": "^6.7.18",
+    "body-parser": "^1.19.0",
+    "ejs": "^3.1.5",
+    "express": "^4.17.1",
+    "express-ejs-layouts": "^2.5.1",
+    "express-mysql-session": "^3.0.3",
+    "express-session": "^1.17.1",
+    "mysql": "^2.18.1",
+    "mysql-baileys": "^1.5.1",
+    "qrcode": "^1.5.4",
+    "req-flash": "0.0.3",
+    "socket.io": "^4.8.1"
+  }
+}
