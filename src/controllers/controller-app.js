@@ -1,14 +1,15 @@
 module.exports ={
     home(req,res){
         res.render("home",{ 
-            url: '',
+            url: '/',
             userName: req.session.username,
             title: 'Dashboard',  
+            scr:'',
         });
     },
     device(req,res){
         res.render("device",{
-            url: '',
+            url: '/',
             userName: req.session.username,
             title: 'Device',
             scr: `<script src="js/devices.js"></script>`

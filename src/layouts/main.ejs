@@ -715,7 +715,7 @@
       <iconify-icon icon="radix-icons:cross-2"></iconify-icon>
     </button>
     <div>
-      <a href="<%- url %>" class="sidebar-logo">
+      <a href="/" class="sidebar-logo">
         <img src="images/logo.png" alt="site logo" class="light-logo">
         <img src="images/logo.png" alt="site logo" class="dark-logo">
         <img src="images/logo-icon.png" alt="site logo" class="logo-icon">
@@ -723,20 +723,20 @@
     </div>
     <div class="sidebar-menu-area open">
       <ul class="sidebar-menu show" id="sidebar-menu">
-        <li class="<%- title === "Dashboard" ? "active-page" : "" %>">
-          <a href="<%- url %>" class="<%- title === "Dashboard" ? "active-page" : "" %>">
+        <li class="<%- (title === "Dashboard" ? "active-page" : "") %>">
+          <a href="/" class="<%- (title === "Dashboard" ? "active-page" : "") %>">
             <iconify-icon icon="material-symbols:dashboard" class="menu-icon"></iconify-icon>
             <span>Dashboard</span>
           </a> 
         </li> 
-        <li class="<%- title === "device" ? "active-page" : "" %>">
-          <a href="<%- url %>device" class="<%- title === "device" ? "active-page" : "" %>">
+        <li class="<%- title == "Device" ? "active-page" : "" %>">
+          <a href="<%- url %>device" class="<%- title === "Device" ? "active-page" : "" %>">
             <iconify-icon icon="gravity-ui:smartphone" class="menu-icon"></iconify-icon>
             <span>Device</span>
           </a>
         </li> 
-        <li class="dropdown">
-          <a href="javascript:void(0)">
+        <li class="dropdown <%- title == "Phonebook" ? "active-page" : "" %>">
+          <a href="javascript:void(0)" >
             <iconify-icon icon="gravity-ui:book" class="menu-icon"></iconify-icon>
             <span>Phonebook</span>
           </a>
