@@ -15,6 +15,8 @@ module.exports ={
     formRegister(req,res){
         res.render("register",{
             url : '',
+            title : "Register",
+            layout: false
         });
     },
     saveRegister(req,res){
