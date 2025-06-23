@@ -15054,15 +15054,7 @@ td.fc-header-center {
   .sidebar-menu li.dropdown > a::after {
     font-size: 1.375rem;
   }
-}
-.sidebar-menu li.dropdown.open > a, .sidebar-menu li.dropdown.dropdown-open > a {
-  /* background-color: var(--brand);
-  color: #fff; */
-}
-
-.sidebar-menu li.dropdown.open > a:hover, .sidebar-menu li.dropdown.dropdown-open > a:hover {
-  /* color: #fff; */
-}
+} 
 
 .sidebar-menu li.dropdown.open > a::after, .sidebar-menu li.dropdown.dropdown-open > a::after {
   -webkit-transform: translateY(-50%) rotate(90deg);
