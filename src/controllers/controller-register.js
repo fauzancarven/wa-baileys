@@ -14,7 +14,7 @@ pool.on('error',(err)=> {
 module.exports ={
     formRegister(req,res){
         res.render("register",{
-            url : 'http://localhost:5050/',
+            url : '',
         });
     },
     saveRegister(req,res){

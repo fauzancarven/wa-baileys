@@ -15,7 +15,7 @@ pool.on('error',(err)=> {
 module.exports ={
     login(req,res){
         res.render("login",{
-            url : 'http://localhost:5050/',
+            url : '',
             colorFlash: req.flash('color'),
             statusFlash: req.flash('status'),
             pesanFlash: req.flash('message'),
