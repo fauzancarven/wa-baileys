@@ -345,7 +345,9 @@
   -moz-user-modify: read-write;
   -webkit-user-modify: read-write;
   overflow-wrap: break-word;
+  line-break: after-white-space;
   -webkit-line-break: after-white-space;
+  user-select: auto;
   -webkit-user-select: auto;
 }
 
