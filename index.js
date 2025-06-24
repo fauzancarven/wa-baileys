@@ -40,8 +40,8 @@ app.use(fileUpload({
 // Configurasi library session
 const sessionStore = new MySQLStore({}, conn);
 const session = expressSession({
-    key: 'session_cookie_name',
-    secret: 'session_cookie_secret',
+    key: 'mahieraglobalsolution',
+    secret: 'fauzancaren',
     store: sessionStore,
     resave: false,
     saveUninitialized: false,
