@@ -12146,7 +12146,7 @@ div.dt-container .dt-paging .dt-paging-button:hover:hover, div.dt-container .dt-
 
 .form-select:focus, .form-select:active, .form-control:focus, .form-control:active, textarea:focus, textarea:active {
   box-shadow: none;
-  border-color: var(--primary-700) !important;
+  border-color: var(--success-700) !important;
   background-color: transparent;
 }
 
@@ -14889,7 +14889,7 @@ td.fc-header-center {
 }
 
 .sidebar.active {
-  width: 86px;
+  width: 4.8rem;
 }
 
 .sidebar.active:hover {
@@ -15192,7 +15192,7 @@ td.fc-header-center {
 }
 @media (min-width: 1199px) {
   .dashboard-main.active {
-    margin-inline-start: 5.375rem;
+    margin-inline-start: 4.8rem;
   }
 }
 /* === dashboard body css end === */

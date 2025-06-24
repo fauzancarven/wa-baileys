@@ -2,14 +2,14 @@ module.exports ={
     home(req,res){
         res.render("home",{ 
             url: '/',
-            userName: req.session.username,
+            session: req.session,
             title: 'Dashboard',   
         });
     },
     device(req,res){
         res.render("device",{
             url: '/',
-            userName: req.session.username,
+            session: req.session,
             title: 'Device',
             scr: `<script src="js/devices.js"></script>`
         });
@@ -17,7 +17,7 @@ module.exports ={
     contact(req,res){
         res.render("contact",{
             url: '/',
-            userName: req.session.username,
+            session: req.session,
             title: 'Phonebook',
             subtitle: 'Contact',
             scr: `<script src="js/contact.js"></script>`
@@ -26,7 +26,7 @@ module.exports ={
     group(req,res){
         res.render("group",{
             url: '/',
-            userName: req.session.username,
+            session: req.session,
             title: 'Phonebook',
             subtitle: 'Group',
             scr: `<script src="js/group.js"></script>`
@@ -35,7 +35,7 @@ module.exports ={
     wagroup(req,res){
         res.render("groupwa",{
             url: '/',
-            userName: req.session.username,
+            session: req.session,
             title: 'Phonebook',
             subtitle: 'Groupwa',
             scr: `<script src="js/groupwa.js"></script>`
@@ -44,7 +44,7 @@ module.exports ={
     chat(req,res){
         res.render("chat",{
             url: '/',
-            userName: req.session.username,
+            session: req.session,
             title: 'Chat', 
             scr: `<script src="js/chat.js"></script>`
         });
@@ -52,7 +52,7 @@ module.exports ={
     bot(req,res){
         res.render("chat",{
             url: '/',
-            userName: req.session.username,
+            session: req.session,
             title: 'Chat', 
             scr: `<script src="js/chat.js"></script>`
         });
@@ -60,7 +60,7 @@ module.exports ={
     history(req,res){
         res.render("chat",{
             url: '/',
-            userName: req.session.username,
+            session: req.session,
             title: 'Chat', 
             scr: `<script src="js/chat.js"></script>`
         });

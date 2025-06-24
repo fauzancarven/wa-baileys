@@ -1,16 +1,6 @@
-const config = require('../configs/database');
-
-let mysql      = require('mysql'); 
-const dbConfig = config();
-let pool = mysql.createPool({
-    host: dbConfig.host,
-    user: dbConfig.user,
-    password: dbConfig.password,
-    database: dbConfig.database
-});
-pool.on('error',(err)=> {
-    console.error(err);
-});
+const config = require('../configs/database'); 
+let mysql      = require('mysql2/promise'); 
+const dbConfig = config(); 
 
 module.exports ={
     login(req,res){
@@ -26,26 +16,46 @@ module.exports ={
         let email = req.body.email;
         let password = req.body.pass;
         if (email && password) {
-            pool.getConnection(function(err, connection) {
-                if (err) throw err;
-                connection.query(
-                    `SELECT * FROM users WHERE user_email = ? AND user_password = SHA2(?,512)`
-                , [email, password],function (error, results) {
-                    if (error) throw error;  
-                    if (results.length > 0) {
-                        req.session.loggedin = true;
-                        req.session.userid = results[0].user_id;
-                        req.session.username = results[0].user_name;
-                        res.redirect('/');
-                    } else {
-                        req.flash('color', 'danger');
-                        req.flash('status', 'Oops..');
-                        req.flash('message', 'Akun tidak ditemukan');
-                        res.redirect('/login');
-                    }
+            let pool = mysql.createPool({
+                host: dbConfig.host,
+                user: dbConfig.user,
+                password: dbConfig.password,
+                database: dbConfig.database
+            });
+            pool.on('error',(err)=> {
+                console.error(err);
+            });
+            pool.getConnection()
+            .then(connection => {
+                return connection.query(
+                `SELECT * FROM users WHERE user_email = ? AND user_password = SHA2(?,512)`,
+                [email, password]
+                ).finally(() => {
+                    connection.release();
                 });
-                connection.release();
             })
+            .then(([results]) => {
+                const user = results[0];
+                console.log(user)
+                if (results.length > 0) {
+                    req.session.loggedin = true;
+                    req.session.userid = user.user_id;
+                    req.session.username = user.user_name;
+                    req.session.useremail = user.user_email;
+                    res.redirect('/');
+                } else {
+                    req.flash('color', 'danger');
+                    req.flash('status', 'Oops..');
+                    req.flash('message', 'Akun tidak ditemukan');
+                    res.redirect('/login');
+                }
+            })
+            .catch(error => {
+                throw error;
+            })
+            .finally(() => {
+                pool.end();
+            });  
         } else {
             res.redirect('/login');
             res.end();
@@ -56,7 +66,7 @@ module.exports ={
             if(err) {
                 return console.log(err);
             }
-            res.clearCookie('secretname');
+            res.clearCookie('fauzancaren');
             res.redirect('/login');
         });
     },
