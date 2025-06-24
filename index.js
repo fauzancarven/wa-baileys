@@ -47,8 +47,8 @@ const session = expressSession({
     saveUninitialized: false,
     cookie: {
         sameSite: true,
-        maxAge: 10000,
-        //maxAge: 3600000 //1 jam //1 jam
+        //maxAge: 10000,
+        maxAge: 3600000 //1 jam //1 jam
     }
   });
 app.use(session);
