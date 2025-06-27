@@ -83,7 +83,7 @@ app.use('/datatable', datatableRoutes);
 app.post('/deploy', (req, res) => deploy_php(req, res)); 
 app.get('/deploy', (req, res) => deploy_php(req, res)); 
 function deploy_php(req, res){
-    childProcess.exec('git pull', (error, stdout, stderr) =>
+    childProcess.exec('git pull origin main', (error, stdout, stderr) =>
     {
         if (error)
         {
@@ -102,10 +102,20 @@ app.get('/logfile', (req, res) => {
         const logFiles = files.map(file => {
             return {
                 filename: file,
-                filepath: `/logfile/${file}`
+                filepath: `/logfile/${file}`,
+                link: `<a href="/logfile/${file}" target="_blank">${file}</a>`
             };
         });
-        res.json(logFiles);
+        res.send(`
+            <html>
+                <body>
+                    <h1>Log Files</h1>
+                    <ul>
+                        ${logFiles.map(file => `<li>${file.link}</li>`).join('')}
+                    </ul>
+                </body>
+            </html>
+            `);
     } catch (err) {
         res.status(500).send({ message: 'Error reading log files' });
     }

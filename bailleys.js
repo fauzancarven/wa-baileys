@@ -8,33 +8,38 @@ const config = require('./src/configs/database');
 const { useMySQLAuthState } = require('mysql-baileys') 
 const fs = require('fs');
 const P = require('pino')
-const date = new Date();
-let currentLogFile = getLogFile(date);
+const logLevels = ['info', 'error', 'trace', 'debug', 'warn'];
 
-function getLogFile(date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    if (!fs.existsSync('./logs')) {
-        fs.mkdirSync('./logs');
-    }
-    return `./logs/wa-logs-${year}-${month}-${day}.txt`;
+function getLogFile(date, type) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  if (!fs.existsSync('./logs')) {
+    fs.mkdirSync('./logs');
+  }
+  return `./logs/${type}-${year}-${month}-${day}.txt`;
 }
 
-setInterval(() => {
-    const newDate = new Date();
-    const newLogFile = getLogFile(newDate);
-    if (newLogFile !== currentLogFile) {
-        currentLogFile = newLogFile;
-        logger = P({ 
-            timestamp: () => `,"time":"${new Date().toJSON()}"` 
-        }, P.destination(currentLogFile));
-    }
-}, 60000); // periksa setiap menit
+let currentLogFiles = {};
+let streams = [];
 
-let logger = P({ 
-    timestamp: () => `,"time":"${new Date().toJSON()}"` 
-}, P.destination(currentLogFile));
+logLevels.forEach(level => {
+  currentLogFiles[level] = getLogFile(new Date(), level);
+  streams.push({ level, stream: P.destination(currentLogFiles[level]) });
+});
+
+let logger = P({ timestamp: () => `,"time":"${new Date().toJSON()}"` }, P.multistream(streams));
+
+setInterval(() => {
+  const newDate = new Date();
+  const newLogFiles = {};
+  logLevels.forEach(level => newLogFiles[level] = getLogFile(newDate, level));
+  if (Object.keys(newLogFiles).some(level => newLogFiles[level] !== currentLogFiles[level])) {
+    currentLogFiles = newLogFiles;
+    streams = logLevels.map(level => ({ level, stream: P.destination(currentLogFiles[level]) }));
+    logger = P({ timestamp: () => `,"time":"${new Date().toJSON()}"` }, P.multistream(streams));
+  }
+}, 60000); // periksa setiap menit
 
 class WhatsApp extends EventEmitter { 
     constructor(phone,pairingcode = false) {
