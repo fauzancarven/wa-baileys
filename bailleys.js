@@ -6,9 +6,36 @@ const mysql = require('mysql2/promise');
 const EventEmitter = require('events');
 const config = require('./src/configs/database');
 const { useMySQLAuthState } = require('mysql-baileys') 
+const fs = require('fs');
 const P = require('pino')
-const logger = P({ timestamp: () => `,"time":"${new Date().toJSON()}"` }, P.destination('./wa-logs.txt'))
-logger.level = 'error'
+const date = new Date();
+let currentLogFile = getLogFile(date);
+
+function getLogFile(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    if (!fs.existsSync('./logs')) {
+        fs.mkdirSync('./logs');
+    }
+    return `./logs/wa-logs-${year}-${month}-${day}.txt`;
+}
+
+setInterval(() => {
+    const newDate = new Date();
+    const newLogFile = getLogFile(newDate);
+    if (newLogFile !== currentLogFile) {
+        currentLogFile = newLogFile;
+        logger = P({ 
+            timestamp: () => `,"time":"${new Date().toJSON()}"` 
+        }, P.destination(currentLogFile));
+    }
+}, 60000); // periksa setiap menit
+
+let logger = P({ 
+    timestamp: () => `,"time":"${new Date().toJSON()}"` 
+}, P.destination(currentLogFile));
+
 class WhatsApp extends EventEmitter { 
     constructor(phone,pairingcode = false) {
         super();  
