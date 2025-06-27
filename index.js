@@ -81,23 +81,6 @@ app.use('/register', registerRoutes);
 app.use('/', appRoutes);
 app.use('/datatable', datatableRoutes);
 app.post('/deploy', (req, res) => deploy_php(req, res)); 
-app.get('/logfile', (req, res) => {
-    console.log("Test"); 
-    const filePath = path.join(__dirname, 'wa-logs.txt');
-    try {
-        const data = fs.readFileSync(filePath, 'utf8');
-        const logs = data.split('\n').filter(line => line.trim() !== '').map(line => {
-            try {
-                return JSON.parse(line);
-            } catch (err) {
-                return null;
-            }
-        }).filter(log => log !== null);
-        res.json(logs);
-    } catch (err) {
-        res.status(500).send({ message: 'Error reading file or invalid JSON format' });
-    }
-});
 app.get('/deploy', (req, res) => deploy_php(req, res)); 
 function deploy_php(req, res){
     childProcess.exec('git pull', (error, stdout, stderr) =>
@@ -110,6 +93,41 @@ function deploy_php(req, res){
         res.send(stdout);
     }); 
 }
+
+
+const logDir = './logs'; 
+app.get('/logfile', (req, res) => {
+    try {
+        const files = fs.readdirSync(logDir).filter(file => file.startsWith('wa-logs-') && file.endsWith('.txt'));
+        const logFiles = files.map(file => {
+            return {
+                filename: file,
+                filepath: `/logfile/${file}`
+            };
+        });
+        res.json(logFiles);
+    } catch (err) {
+        res.status(500).send({ message: 'Error reading log files' });
+    }
+});
+
+app.get('/logfile/:filename', (req, res) => {
+    try {
+        const filename = req.params.filename;
+        const filePath = path.join(logDir, filename);
+        const data = fs.readFileSync(filePath, 'utf8');
+        const logs = data.split('\n').filter(line => line.trim() !== '').map(line => {
+            try {
+                return JSON.parse(line);
+            } catch (err) {
+                return null;
+            }
+        }).filter(log => log !== null);
+        res.json(logs);
+    } catch (err) {
+        res.status(404).send({ message: 'Log file not found' });
+    }
+});
 // send text message to wa user
 app.post("/send-message", async (req, res) => {
     try {
