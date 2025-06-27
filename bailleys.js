@@ -1,4 +1,4 @@
-const { makeWASocket, AnyMessageContent, BinaryInfo, delay, DisconnectReason, downloadAndProcessHistorySyncNotification, encodeWAM, fetchLatestBaileysVersion, getAggregateVotesInPollMessage, getHistoryMsg, isJidNewsletter, makeCacheableSignalKeyStore, proto, useMultiFileAuthState, WAMessageContent, WAMessageKey } = require('@whiskeysockets/baileys');
+const { makeWASocket, AnyMessageContent, BinaryInfo, delay, DisconnectReason, downloadAndProcessHistorySyncNotification, encodeWAM, fetchLatestBaileysVersion, getAggregateVotesInPollMessage, getHistoryMsg, isJidNewsletter, makeCacheableSignalKeyStore, proto, useMultiFileAuthState, WAMessageContent, WAMessageKey } = require('baileys');
  
 const { Boom } = require('@hapi/boom');
 const QRCode = require('qrcode'); 
@@ -48,11 +48,13 @@ class WhatsApp extends EventEmitter {
         this.sock = null; 
         this.phone = phone;
         this.pairingcode = pairingcode;
+        this.attempt  = 0;
     }
     delay(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
     async connect() {  
+        const maxAttempts = 10;
         const { state, saveCreds, removeCreds } = await useMySQLAuthState(config(this.phone));
         this.sock = makeWASocket({
             logger, 
@@ -70,8 +72,8 @@ class WhatsApp extends EventEmitter {
         // Pairing code for Web clients 
         if (this.pairingcode && !this.sock.authState.creds.registered) {   
             try{
-                await delay(500); 
-                let code = await this.sock.requestPairingCode(this.phone?.split(':')[0]);  
+                await delay(10000); 
+                let code = await this.sock.requestPairingCode(this.phone?.split(':')[0],"MGS0Nl3N");  
                 this.emit('pairing-code',   {number: this.phone, status:"success", reason: code});  
                 console.log(this.phone, code) 
             }catch(err){  
@@ -102,8 +104,7 @@ class WhatsApp extends EventEmitter {
                     this.connect();
                 } else if (reason === DisconnectReason.connectionReplaced) {  
                     this.emit('close', {number: this.phone,reason:`code : 104 | Connection Replaced, Another New Session Opened, Please Close Current Session First`});  
-                    console.log('close', {number: this.phone,reason:`code : 104 | Connection Replaced, Another New Session Opened, Please Close Current Session First`});  
-                    this.sock.logout();
+                    console.log('close', {number: this.phone,reason:`code : 104 | Connection Replaced, Another New Session Opened, Please Close Current Session First`});   
                 } else if (reason === DisconnectReason.loggedOut) {  
                     this.emit('close', {number: this.phone,reason: `code : 105 | Device Logged Out, Please Delete ${this.phone} and Scan Again.`}); 
                     console.log('close', {number: this.phone,reason: `code : 105 | Device Logged Out, Please Delete ${this.phone} and Scan Again.`}); 
@@ -116,7 +117,7 @@ class WhatsApp extends EventEmitter {
                         this.connect();
                     }, 5000); // Tunggu 
                 } else if (reason === DisconnectReason.timedOut) { 
-                    this.emit('close', {number: this.phone,reason: `code : 106 | Restart Required, Restarting...`}); 
+                    this.emit('close', {number: this.phone,reason: `code : 107 | Connection TimedOut, Reconnecting...`}); 
                     console.log('close', {number: this.phone,reason: `code : 107 | Connection TimedOut, Reconnecting...`});     
                     this.connect();
                 } else {   
@@ -128,6 +129,8 @@ class WhatsApp extends EventEmitter {
                 this.status = "connected"; 
                 console.log(`whatsaapp ready : ${this.phone}`)
                 this.emit('open',{number: this.phone,reason: "whatsapp berhasil terhubung!!!"}); 
+                this.attempt = 0; // Reset percobaan ketika koneksi berhasil
+                // Kode ketika koneksi berhasil
             } else if(connection == "connecting" || !!qr){ 
                 if (update.qr && !this.pairingcode) { 
                     QRCode.toDataURL(qr, (err, url) => { 
@@ -144,10 +147,11 @@ class WhatsApp extends EventEmitter {
     async sendMessage(number, message) {
         await this.sock.sendMessage(`${number}`, { text: message });
     } 
-    destroy() {
+    async destroy() {
         // Logika untuk menghancurkan koneksi WhatsApp
         try {
-            this.sock.logout();
+            await removeCreds();
+            await this.sock.logout();
             this.sock = null;
         } catch (error) { 
             this.sock = null;

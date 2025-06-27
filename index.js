@@ -68,7 +68,8 @@ app.use(function(req, res, next) {
 
 // Setting folder views
 app.set('views',path.join(__dirname,'src/views'));
-app.use(express.static('src/assets'));  
+app.use('/assets', express.static('src/assets'));
+app.use('/app', express.static('src/app'));
 app.set('view engine', 'ejs');
 app.use(expressLayouts);
 app.set('layout extractScripts', true);
@@ -145,7 +146,8 @@ app.post("/send-message", async (req, res) => {
         const pesankirim = req.body.message;
         const sender = phoneNumberFormatter(req.body.sender,false);
         const number = req.body.number;
-        const fileDikirim = req.files.file_dikirim;  
+        const fileDikirim = req.files && req.files.file_dikirim;
+
         if(!session_wa[sender]){
             return res.status(500).json({
                 status: false,
@@ -345,7 +347,7 @@ async function updateMetodeNumber(number,status){
         database: dbConfig.database
     });
     try { 
-        await db.execute(`update device set type=${status} where nomor=${number}`); 
+        await db.execute(`update device set type=${status} where nomor='${number}'`); 
         console.log(`update device set type=${status} where nomor=${number}`);
     } catch (error) {
         console.error('Error loading numbers and types from DB:', error);
@@ -375,6 +377,8 @@ async function loadNumbersFromDB() {
     }
 } 
 async function craate_session_wa(number,type){
+    let attempt = 0;
+    let reason = "";
     const nomer = phoneNumberFormatter(number,false);
     await updateMetodeNumber(number,type);
     if (session_wa[number]) {
@@ -386,20 +390,35 @@ async function craate_session_wa(number,type){
     session_wa[number] = new WhatsApp(nomer,(type==1 ? true : false));  
     session_wa[number].connect();
     session_wa[number].on('close', async (data) => { 
+        if(reason === data.reason){
+            attempt++;
+        }else{
+            reason = data.reason
+            attempt = 0;
+        }
+        if (attempt >= 10) {
+            session_wa[number].destroy();
+            delete session_wa[number];
+            return;
+        }
         io.emit('whatsapp-status', { number: data.number, status: 'close', reason: data.reason });   
         await updateStatusNumber(data.number,0);
+        console.log(data.reason)
     });
     session_wa[number].on('open', async (data) => { 
         io.emit('whatsapp-status', { number: data.number, status: 'open', reason: data.reason });   
         await updateStatusNumber(data.number,1);
+        console.log(data.reason)
     });
     session_wa[number].on('pairing-code', async (data) => { 
         io.emit('whatsapp-pairing', { number: data.number,status: data.status, reason: data.reason });
         await updateStatusNumber(data.number,0);
+        console.log(data.reason)
     }); 
     session_wa[number].on('qr', async (data) => {  
         io.emit('whatsapp-qr', { number: data.number, status: 'qr', reason: data.reason });
         await updateStatusNumber(data.number,0);
+        console.log(data.reason)
     }); 
 
     // const number = phoneNumberFormatter("6289676143063");
@@ -443,6 +462,33 @@ io.on("connection", async (socket) => {
     });
     socket.on('new-device', (data) => {
         craate_session_wa(data["number"],data["type"]);
+    }); 
+    socket.on('remove-device', async (data) => {
+        
+        console.log('try remove session :', data["number"]);
+        const query = 'SELECT nomor FROM device where nomor = "' + data["number"]+ '" and status=0'; 
+        const db = await mysqlprom.createConnection({
+            host: dbConfig.host,
+            user: dbConfig.user,
+            password: dbConfig.password,
+            database: dbConfig.database
+        });
+        try { 
+            const [rows] = await db.execute(query);
+            await db.end();
+            console.log(rows.length) 
+            if (rows.length > 0) {
+                if (session_wa[data["number"]]) {
+                  session_wa[data["number"]].destroy();
+                  delete session_wa[data["number"]];
+                  console.log('delete session database:', data["number"]);
+                }
+            } 
+        } catch (error) {
+            console.error('Error loading numbers and types from DB:', error);
+            await db.end();
+            return []; 
+        } 
     }); 
     socket.on('update-session', () => { 
         sessionStore.get(sessionId, (err, session) => {

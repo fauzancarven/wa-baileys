@@ -71,7 +71,8 @@ $(document).ready(function() {
         }); 
         $('#modal-scan').on('hidden.bs.modal', function () {
             $('#pills-tab button').off('shown.bs.tab');
-            table.ajax.reload();
+            table.ajax.reload(); 
+            socket.emit("remove-device", {number: number});
         });
         $('#pills-button-qr-tab').tab('show').trigger('shown.bs.tab'); 
         socket.on('whatsapp-qr', (data) => {
@@ -92,7 +93,8 @@ $(document).ready(function() {
                     divs[index].textContent = char;
                 });
             } else{ 
-                console.log("Error : ",data.reason) 
+                console.log("Error : ",data.reason);
+                $('#pills-button-qr-tab').tab('show').trigger('shown.bs.tab');
             }
             console.log('Data whatsapp-pairing dari server:', data);
         }); 
@@ -132,4 +134,6 @@ $(document).ready(function() {
             return  false; 
         } 
     });
+
+    
 });

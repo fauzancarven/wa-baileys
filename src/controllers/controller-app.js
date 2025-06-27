@@ -11,7 +11,7 @@ module.exports ={
             url: '/',
             session: req.session,
             title: 'Device',
-            scr: `<script src="js/devices.js"></script>`
+            scr: `<script src="app/devices.js"></script>`
         });
     },
     contact(req,res){
@@ -20,7 +20,7 @@ module.exports ={
             session: req.session,
             title: 'Phonebook',
             subtitle: 'Contact',
-            scr: `<script src="js/contact.js"></script>`
+            scr: `<script src="app/contact.js"></script>`
         });
     },
     group(req,res){
@@ -29,7 +29,7 @@ module.exports ={
             session: req.session,
             title: 'Phonebook',
             subtitle: 'Group',
-            scr: `<script src="js/group.js"></script>`
+            scr: `<script src="app/group.js"></script>`
         });
     },
     wagroup(req,res){
@@ -38,7 +38,7 @@ module.exports ={
             session: req.session,
             title: 'Phonebook',
             subtitle: 'Groupwa',
-            scr: `<script src="js/groupwa.js"></script>`
+            scr: `<script src="app/groupwa.js"></script>`
         });
     },
     chat(req,res){
@@ -46,7 +46,7 @@ module.exports ={
             url: '/',
             session: req.session,
             title: 'Chat', 
-            scr: `<script src="js/chat.js"></script>`
+            scr: `<script src="app/chat.js"></script>`
         });
     },
     bot(req,res){
@@ -54,7 +54,7 @@ module.exports ={
             url: '/',
             session: req.session,
             title: 'Chat', 
-            scr: `<script src="js/chat.js"></script>`
+            scr: `<script src="app/chat.js"></script>`
         });
     },
     history(req,res){
@@ -62,7 +62,7 @@ module.exports ={
             url: '/',
             session: req.session,
             title: 'Chat', 
-            scr: `<script src="js/chat.js"></script>`
+            scr: `<script src="app/chat.js"></script>`
         });
     }
 }
