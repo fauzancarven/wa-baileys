@@ -3,7 +3,7 @@ const express = require('express');
 const expressSession = require('express-session');
 const expressLayouts = require('express-ejs-layouts');
 const bodyParser = require('body-parser');
-const path = require('path');
+ 
 const flash = require('req-flash');
 const app = express();
 const childProcess = require('child_process');
@@ -11,6 +11,8 @@ const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 const sharedsession = require('express-socket.io-session');
 
+const fs = require("fs");
+const path = require("path");
 const config = require('./src/configs/database'); 
 const dbConfig = config();
 const MySQLStore = require('express-mysql-session')(expressSession);
@@ -78,7 +80,24 @@ app.use('/login', loginRoutes);
 app.use('/register', registerRoutes);
 app.use('/', appRoutes);
 app.use('/datatable', datatableRoutes);
-app.post('/deploy', (req, res) => deploy_php(req, res));
+app.post('/deploy', (req, res) => deploy_php(req, res)); 
+app.get('/logfile', (req, res) => {
+    console.log("Test"); 
+    const filePath = path.join(__dirname, 'wa-logs.txt');
+    try {
+        const data = fs.readFileSync(filePath, 'utf8');
+        const logs = data.split('\n').filter(line => line.trim() !== '').map(line => {
+            try {
+                return JSON.parse(line);
+            } catch (err) {
+                return null;
+            }
+        }).filter(log => log !== null);
+        res.json(logs);
+    } catch (err) {
+        res.status(500).send({ message: 'Error reading file or invalid JSON format' });
+    }
+});
 app.get('/deploy', (req, res) => deploy_php(req, res)); 
 function deploy_php(req, res){
     childProcess.exec('git pull', (error, stdout, stderr) =>
@@ -131,8 +150,6 @@ app.post("/send-message", async (req, res) => {
                 });
             }else{ 
                 console.log('send message file');
-                const fs = require("fs");
-                const path = require("path");
                 let filesimpan = fileDikirim;
                 var file_ubah_nama = new Date().getTime() + '_' + filesimpan.name;
                 //pindahkan file ke dalam upload directory
