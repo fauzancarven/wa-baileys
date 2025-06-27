@@ -12112,7 +12112,7 @@ div.dt-container .dt-paging .dt-paging-button:focus {
 }
 
 div.dt-container .dt-paging .dt-paging-button:hover, div.dt-container .dt-paging .dt-paging-button.current {
-  background: var(--primary-800) !important;
+  background: var(--success-600) !important;
   color: #fff !important;
 }
 
