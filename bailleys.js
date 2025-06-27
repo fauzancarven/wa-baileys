@@ -29,7 +29,7 @@ logLevels.forEach(level => {
 });
 
 let logger = P({ timestamp: () => `,"time":"${new Date().toJSON()}"` }, P.multistream(streams));
-
+//test
 setInterval(() => {
   const newDate = new Date();
   const newLogFiles = {};
